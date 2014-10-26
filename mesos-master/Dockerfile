@@ -1,17 +1,16 @@
 # Build Mesos And Marathon Container - Marathon Requires Java
-FROM java:java8
+FROM centos6:java8
 MAINTAINER Geoffrey Harrison <geoffrey.harrison@lynxdigital.com.au>
 
 # Copy In Local Marathon Package
-ADD packages/marathon-0.7.1.tar.gz /tmp/marathon-0.7.1.tar.gz
+ADD packages/marathon-0.7.1.tgz /tmp/marathon
 
 # Download And Install Applications
 RUN rpm -Uvh http://repos.mesosphere.io/el/6/noarch/RPMS/mesosphere-el-repo-6-2.noarch.rpm && \
     cd /tmp && \
     yum -y install mesos tar && \
-    tar zxf /tmp/marathon-0.7.1.tgz -C /usr/local && \
-    mv /usr/local/marathon-0.7.1 /usr/local/marathon && \
-    rm -f /tmp/marathon-0.7.1.tgz && \
+    mv /tmp/marathon/marathon-0.7.1 /usr/local/marathon && \
+    rm -rf /tmp/marathon && \
     yum -y clean all;
 
 # Add Run Script
