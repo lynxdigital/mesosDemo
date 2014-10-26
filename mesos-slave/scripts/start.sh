@@ -24,6 +24,9 @@ else
 	exit 1
 fi
 
+echo "docker,mesos" > /etc/mesos-slave/containerizers
+echo '5mins' > /etc/mesos-slave/executor_registration_timeout
+
 # Start Mesos Slave
-mesos slave --master=$MESOS_ZKLIST --work_dir=$MESOS_WORKDIR --log_dir=$MESOS_LOGDIR
+mesos slave --master=$MESOS_ZKLIST --containerizers=docker,mesos --executor_registration_timeout=5mins --work_dir=$MESOS_WORKDIR --log_dir=$MESOS_LOGDIR
 
