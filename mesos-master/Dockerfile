@@ -2,10 +2,12 @@
 FROM java:java8
 MAINTAINER Geoffrey Harrison <geoffrey.harrison@lynxdigital.com.au>
 
+# Copy In Local Marathon Package
+ADD packages/marathon-0.7.1.tar.gz /tmp/marathon-0.7.1.tar.gz
+
 # Download And Install Applications
 RUN rpm -Uvh http://repos.mesosphere.io/el/6/noarch/RPMS/mesosphere-el-repo-6-2.noarch.rpm && \
     cd /tmp && \
-    curl -O http://downloads.mesosphere.com/marathon/v0.7.1/marathon-0.7.1.tgz && \
     yum -y install mesos tar && \
     tar zxf /tmp/marathon-0.7.1.tgz -C /usr/local && \
     mv /usr/local/marathon-0.7.1 /usr/local/marathon && \
