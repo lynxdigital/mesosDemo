@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.network "forwarded_port", guest: 5050, host: 5050
     master.vm.network "forwarded_port", guest: 5000, host: 5000
     master.vm.network "private_network", ip: "192.168.58.201"
-    master.vm.provision :shell, path: "bootstrap-master.sh"
+    master.vm.provision :shell, path: "master/bootstrap.sh"
   end
 
   # Define Slave VM
@@ -31,7 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.cpus = 1
     end
     slave.vm.network "private_network", ip: "192.168.58.211"
-    slave.vm.provision :shell, path: "bootstrap-slave.sh"
+    slave.vm.provision :shell, path: "slave/bootstrap.sh"
   end
 
 end

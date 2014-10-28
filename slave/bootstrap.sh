@@ -7,6 +7,10 @@ yum -y install epel-release
 yum -y install wget curl docker-io bind-utils mesos tar
 yum -y clean all
 
+# Update IP Forwarding
+sed -i "s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g" /etc/sysctl.conf
+sysctl -p
+
 # Modify Docker Startup And Start Docker Service
 chkconfig docker on
 service docker start
@@ -14,23 +18,19 @@ service docker start
 # Add Vagrant User To Docker Group
 usermod -a -G docker vagrant
 
-# Add Master Startup To Boot
-echo >> /etc/rc.local
-echo "# Mesos Slave Startup" >> /etc/rc.local
-echo "/opt/mesosDemo/startup-slave.sh &" >> /etc/rc.local
-
 # Copy In Files
 mkdir -p /opt/mesosDemo
-cp -av /vagrant/startup-slave.sh /opt/mesosDemo/
-chmod u+x /opt/mesosDemo/startup-slave.sh
+cp -av /vagrant/slave/* /opt/mesosDemo/
+chmod u+x /opt/mesosDemo/startup.sh
 
-# Disable Mesos Master Service
+# Disable Mesos Auto Services
 rm -f /etc/init/mesos-master.conf
 rm -f /etc/init/mesos-slave.conf
 
-# Update IP Forwarding
-sed -i "s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g" /etc/sysctl.conf
-sysctl -p
+# Add Master Startup To Boot
+echo >> /etc/rc.local
+echo "# Mesos Slave Startup" >> /etc/rc.local
+echo "/opt/mesosDemo/startup.sh &" >> /etc/rc.local
 
 # Reboot
 reboot
