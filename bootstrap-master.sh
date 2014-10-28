@@ -28,5 +28,6 @@ echo /opt/mesosDemo/startup-master.sh >> /etc/rc.local
 mkdir -p /opt/mesosDemo
 cp -av /vagrant/* /opt/mesosDemo/
 
-exec /opt/mesosDemo/startup-master.sh
+# Reboot
+reboot
 
