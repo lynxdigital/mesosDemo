@@ -23,6 +23,7 @@ echo $MESOS_ZKLIST > /etc/mesos/zk
 # Set Mesos Quorum
 echo $MESOS_QUORUM > /etc/mesos-master/quorum
 echo $MESOS_WORKDIR > /etc/mesos-master/work_dir
+echo 600secs > /etc/mesos-master/zk_session_timeout
 
 if [ -e "$MESOS_HOSTNAME" ]
 then
@@ -30,9 +31,9 @@ then
 fi
 
 # Start Mesos Master
-mesos master --ip=$MASTERIP --zk=$MESOS_ZKLIST --work_dir=$MESOS_WORKDIR --quorum=$MESOS_QUORUM --log_dir=$MESOS_LOGDIR --quiet &
+mesos master --ip=$MASTERIP --zk=$MESOS_ZKLIST --zk_session_timeout=600secs --work_dir=$MESOS_WORKDIR --quorum=$MESOS_QUORUM --log_dir=$MESOS_LOGDIR &
 
 # Start Marathon Framework
 cd /usr/local/marathon
-./bin/start --master $MESOS_ZKLIST --zk $MARATHON_ZKLIST --ha
+./bin/start --master $MESOS_ZKLIST --zk $MARATHON_ZKLIST --zk_timeout 600000 --ha
 

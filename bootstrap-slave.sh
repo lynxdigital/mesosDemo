@@ -15,7 +15,9 @@ service docker start
 usermod -a -G docker vagrant
 
 # Add Master Startup To Boot
-echo /opt/mesosDemo/startup-slave.sh >> /etc/rc.local
+echo >> /etc/rc.local
+echo "# Mesos Slave Startup" >> /etc/rc.local
+echo "/opt/mesosDemo/startup-slave.sh &" >> /etc/rc.local
 
 # Copy In Files
 mkdir -p /opt/mesosDemo

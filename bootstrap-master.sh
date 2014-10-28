@@ -32,6 +32,18 @@ cp -av /vagrant/* /opt/mesosDemo/
 sed -i "s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g" /etc/sysctl.conf
 sysctl -p
 
+# Start Registry And Push MyApp
+cd registry/
+REGISTRY=$(./run.sh)
+sleep 10
+cd ..
+MYAPPID=$(docker images myapp | awk '{print $3}' | grep -v IMAGE)
+docker tag $MYAPPID 192.168.58.201:5000/myapp:latest
+docker push 192.168.58.201:5000/myapp:latest
+docker stop $REGISTRY
+docker rm $REGISTRY
+docker rm 192.168.58.201:5000/myapp:latest
+
 # Reboot
 reboot
 
