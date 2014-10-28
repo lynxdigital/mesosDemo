@@ -1,5 +1,5 @@
-#!/bin/bash
-# Build CentOS 6 Image On The Scratch Image
+#!/usr/bin/env bash
+# Build CentOS 6 Image From Scratch
 # Geoffrey Harrison
 
 # Check For Existing Centos 6 Image And Remove
@@ -20,3 +20,4 @@ docker build -t centos6:base .
 echo
 echo " Image Creation Completed!"
 echo
+

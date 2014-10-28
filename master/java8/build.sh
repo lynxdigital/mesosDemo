@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build Java 8 Container
 # Geoffrey Harrison
 

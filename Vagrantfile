@@ -1,11 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+# VagrantFile To Build Mesos Master/Slave Environment
+# Geoffrey Harrison
+
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  # Define Master VM
+
+  # Define Master Machine
   config.vm.define "master" do |master|
     master.vm.box = "master"
     master.vm.hostname = "master.local"
@@ -21,7 +24,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     master.vm.provision :shell, path: "master/bootstrap.sh"
   end
 
-  # Define Slave VM
+  # Define Slave1 Machine
   config.vm.define "slave" do |slave|
     slave.vm.box = "slave1"
     slave.vm.hostname = "slave1.local"
@@ -33,5 +36,31 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     slave.vm.network "private_network", ip: "192.168.58.211"
     slave.vm.provision :shell, path: "slave/bootstrap.sh"
   end
+
+  ## Define Slave2 Machine
+  #config.vm.define "slave2" do |slave|
+  #  slave.vm.box = "slave2"
+  #  slave.vm.hostname = "slave2.local"
+  #  slave.vm.box = "chef/centos-6.5"
+  #  config.vm.provider "virtualbox" do |v|
+  #    v.memory = 512
+  #    v.cpus = 1
+  #  end
+  #  slave.vm.network "private_network", ip: "192.168.58.212"
+  #  slave.vm.provision :shell, path: "slave/bootstrap.sh"
+  #end
+
+  ## Define Slave3 Machine
+  #config.vm.define "slave3" do |slave|
+  #  slave.vm.box = "slave3"
+  #  slave.vm.hostname = "slave3.local"
+  #  slave.vm.box = "chef/centos-6.5"
+  #  config.vm.provider "virtualbox" do |v|
+  #    v.memory = 512
+  #    v.cpus = 1
+  #  end
+  #  slave.vm.network "private_network", ip: "192.168.58.213"
+  #  slave.vm.provision :shell, path: "slave/bootstrap.sh"
+  #end
 
 end

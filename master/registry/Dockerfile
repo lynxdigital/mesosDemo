@@ -7,9 +7,9 @@ ADD scripts/start.sh /start.sh
 
 # Install Packages And Set Start Scripts Permissions
 RUN yum -y install epel-release && \
-    yum -y install docker-registry && \
-    yum -y clean all;\
-    chmod u+x /start.sh
+      yum -y install docker-registry && \
+      yum -y clean all;\
+      chmod u+x /start.sh
 
 # Expose Volumes And Ports
 VOLUME ["/var/lib/docker-registry"]

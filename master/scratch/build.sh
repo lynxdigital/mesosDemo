@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Create Empty Docker Image To Base All Other Images Off Of
 # Geoffrey Harrison
 

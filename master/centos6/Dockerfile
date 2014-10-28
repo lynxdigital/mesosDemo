@@ -11,5 +11,5 @@ ADD packages/CentOS-6-20140926_1219-docker.tar.xz /
 
 # Update Packages To The Latest Version - Clean Out Extra Files
 RUN yum -y update;\
-    yum clean all;
+      yum clean all;
 

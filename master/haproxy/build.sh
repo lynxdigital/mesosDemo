@@ -1,5 +1,5 @@
-#!/bin/bash
-# Build HAProxy Container
+#!/usr/bin/env bash
+# Build HAProxy Container From CentOS 6
 # Geoffrey Harrison
 
 # Check For Existing HAProxy Image And Remove

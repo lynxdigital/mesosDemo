@@ -16,13 +16,13 @@ service docker start
 # Add Vagrant User To Docker Group
 usermod -a -G docker vagrant
 
-# Copy In Files
+# Copy In Files From Vagrant Share
 mkdir -p /opt/mesosDemo
 chown vagrant:vagrant -R /opt/mesosDemo
 cp -av /vagrant/master/* /opt/mesosDemo/
 chmod u+x /opt/mesosDemo/startup.sh
 
-# Build Docker Machines For Master Service
+# Build Docker Machines For Master And Application
 cd /opt/mesosDemo
 for G in scratch centos6 java8 mesos-base nginx-php5 mesos-master zookeeper haproxy registry myapp
 do
@@ -31,7 +31,7 @@ do
   cd ..
 done
 
-# Start Registry And Push MyApp
+# Start Local Registry And Upload Application
 cd registry/
 REGISTRY=$(./run.sh)
 sleep 10
@@ -41,13 +41,13 @@ docker tag $MYAPPID 192.168.58.201:5000/myapp:latest
 docker push 192.168.58.201:5000/myapp:latest
 docker stop $REGISTRY
 docker rm $REGISTRY
-docker rm 192.168.58.201:5000/myapp:latest
+docker rmi 192.168.58.201:5000/myapp:latest
 
-# Add Master Startup To Boot
+# Add Startup To Boot
 echo >> /etc/rc.local
 echo "# Mesos Master Startup" >> /etc/rc.local
 echo "/opt/mesosDemo/startup.sh" >> /etc/rc.local
 
-# Reboot
+# Reboot Machine
 reboot
 

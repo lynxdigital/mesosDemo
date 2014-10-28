@@ -1,8 +1,8 @@
-#!/bin/bash
-# Build Mesos Base Container
+#!/usr/bin/env bash
+# Build Nginx PHP5 Container
 # Geoffrey Harrison
 
-# Check For Existing Nginx PHP 5 Image And Remove
+# Check For Existing Nginx PHP5 Image And Remove
 docker images nginx | grep -q php5
 if [ $? -eq 0 ]
 then

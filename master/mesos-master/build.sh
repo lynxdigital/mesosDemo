@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build Mesos Master Container With Marathon
 # Geoffrey Harrison
 

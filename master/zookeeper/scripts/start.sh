@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash
 
 # Check For Required Variables
 if [ -z "$ZK_ID" ]

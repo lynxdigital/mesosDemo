@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build Docker Registry On The CentOS 6 Image
 # Geoffrey Harrison
 

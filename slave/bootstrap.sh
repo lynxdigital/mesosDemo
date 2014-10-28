@@ -18,21 +18,21 @@ service docker start
 # Add Vagrant User To Docker Group
 usermod -a -G docker vagrant
 
-# Copy In Files
+# Copy In Files From Vagrant Share
 mkdir -p /opt/mesosDemo
 chown vagrant:vagrant -R /opt/mesosDemo
 cp -av /vagrant/slave/* /opt/mesosDemo/
 chmod u+x /opt/mesosDemo/startup.sh
 
-# Disable Mesos Auto Services
+# Disable Mesos Auto Startup
 rm -f /etc/init/mesos-master.conf
 rm -f /etc/init/mesos-slave.conf
 
-# Add Master Startup To Boot
+# Add Mesos Startup To Boot
 echo >> /etc/rc.local
 echo "# Mesos Slave Startup" >> /etc/rc.local
 echo "/opt/mesosDemo/startup.sh &" >> /etc/rc.local
 
-# Reboot
+# Reboot Machine
 reboot
 

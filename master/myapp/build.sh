@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Build Application Container
 # Geoffrey Harrison
 
@@ -12,7 +12,7 @@ then
   echo "DONE!"
 fi
 
-# Create New Nginx MyApp Image In Docker
+# Create New MyApp Image In Docker
 echo
 echo " Creating New MyApp Image..."
 echo

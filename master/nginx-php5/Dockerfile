@@ -2,18 +2,19 @@
 FROM centos6:base
 MAINTAINER Geoffrey Harrison <geoffrey.harrison@lynxdigital.com.au>
 
+# Add Startup Script
 ADD scripts/start.sh /start.sh
 
-# Install And COnfigure PHP and Nginx
+# Install And Configure PHP and Nginx
 RUN yum -y install epel-release && \
-	yum -y install nginx php-fpm && \
-    yum -y clean all; \
-    sed -i "s/user\ =\ apache/user\ =\ nginx/g" /etc/php-fpm.d/www.conf; \
-	sed -i "s/group\ =\ apache/group\ =\ nginx/g" /etc/php-fpm.d/www.conf; \
-	echo "daemon off;" >> /etc/nginx/nginx.conf; \
-	rm -f /etc/nginx/conf.d/ssl.conf; \
-	rm -f /etc/nginx/conf.d/virtual.conf; \
-	chmod u+x start.sh;
+      yum -y install nginx php-fpm && \
+      yum -y clean all; \
+      sed -i "s/user\ =\ apache/user\ =\ nginx/g" /etc/php-fpm.d/www.conf; \
+      sed -i "s/group\ =\ apache/group\ =\ nginx/g" /etc/php-fpm.d/www.conf; \
+      echo "daemon off;" >> /etc/nginx/nginx.conf; \
+      rm -f /etc/nginx/conf.d/ssl.conf; \
+      rm -f /etc/nginx/conf.d/virtual.conf; \
+      chmod u+x start.sh;
 
 EXPOSE 80/tcp 443/tcp
 

@@ -1,17 +1,20 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Start Docker Machines For Master Services
 cd /opt/mesosDemo
-for G in zookeeper mesos-master registry haproxy
+for CONTAINER in zookeeper mesos-master registry haproxy
 do
-  docker ps -a | grep -q $G > /dev/null
+  # Check For Old Container - Remove If Found
+  docker ps -a | grep -q $CONTAINER > /dev/null
   if [ $? -eq 0 ]
   then
-    ID=$(docker ps -a | grep $G | awk '{print $1}')
+    ID=$(docker ps -a | grep $CONTAINER | awk '{print $1}')
     docker stop $ID
     docker rm $ID
   fi
-  cd $G/
+
+  # Startup New Container
+  cd $CONTAINER/
   ./run.sh
   cd ..
 done
