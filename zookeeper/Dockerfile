@@ -4,11 +4,13 @@ MAINTAINER Geoffrey Harrison <geoffrey.harrison@lynxdigital.com.au>
 
 # Add Startup Script
 ADD scripts/start.sh /start.sh
+ADD packages/bigtop-utils-0.6.0+243-1.cdh4.7.0.p0.17.el6.noarch.rpm /tmp/bigtop-utils-0.6.0+243-1.cdh4.7.0.p0.17.el6.noarch.rpm
+ADD packages/zookeeper-3.4.5+26-1.cdh4.7.0.p0.17.el6.x86_64.rpm /tmp/zookeeper-3.4.5+26-1.cdh4.7.0.p0.17.el6.x86_64.rpm
 
 # Install Additional Packages - Set Start Script Permissions - Clean Out Files
-RUN rpm -Uvh http://archive.cloudera.com/cdh4/one-click-install/redhat/6/x86_64/cloudera-cdh-4-0.x86_64.rpm && \
-    yum -y install zookeeper && \
-    yum -y clean all;\
+RUN yum -y install /tmp/zookeeper-3.4.5+26-1.cdh4.7.0.p0.17.el6.x86_64.rpm /tmp/bigtop-utils-0.6.0+243-1.cdh4.7.0.p0.17.el6.noarch.rpm && \
+    yum -y clean all && \
+    rm -f zookeeper-3.4.5+26-1.cdh4.7.0.p0.17.el6.x86_64.rpm bigtop-utils-0.6.0+243-1.cdh4.7.0.p0.17.el6.noarch.rpm; \
     chmod u+x /start.sh;
 
 # Expose Volumes And Ports

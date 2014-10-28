@@ -28,6 +28,10 @@ echo /opt/mesosDemo/startup-master.sh >> /etc/rc.local
 mkdir -p /opt/mesosDemo
 cp -av /vagrant/* /opt/mesosDemo/
 
+# Update IP Forwarding
+sed -i "s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g" /etc/sysctl.conf
+sysctl -p
+
 # Reboot
 reboot
 

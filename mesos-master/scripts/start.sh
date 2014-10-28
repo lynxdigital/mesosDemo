@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Check For Passed In Variables
+#Check For Passed In Variables
 if [ -z "$MESOS_QUORUM" ]
 then
   MESOS_QUORUM="1"
@@ -14,16 +14,11 @@ then
   MESOS_LOGDIR="/var/log/mesos"
 fi
 
-# Check If ZooKeeper Servers Are Linked - If Not Mesos Will Default To Local ZooKeeper Install
-set | grep -q ZK > /dev/null
-if [ $? -eq 0 ]
-then
-  # Gather ZooKeeper Strings And Put In Mesos File
-  ZKLIST=`set | grep ZK | grep tcp:// | grep -v 888 | grep _TCP | sed 's/^.*=tcp:\/\///g' | tr "\n" "," | sed 's/^/zk:\/\//g'`
-  MESOS_ZKLIST=`echo $ZKLIST | sed 's/,$/\/mesos\n/g'`
-  MARATHON_ZKLIST=`echo $ZKLIST | sed 's/,$/\/marathon\n/g'`
-  echo $MESOS_ZKLIST > /etc/mesos/zk
-fi
+MASTERIP=$(ip addr show eth1 | grep "inet " | awk '{print $2}' | sed 's/\/.*$//g')
+MESOS_ZKLIST=zk://$MASTERIP:2181/mesos
+MARATHON_ZKLIST=zk://$MASTERIP:2181/marathon
+echo $MASTERIP > /etc/mesos-master/ip
+echo $MESOS_ZKLIST > /etc/mesos/zk
 
 # Set Mesos Quorum
 echo $MESOS_QUORUM > /etc/mesos-master/quorum
@@ -35,7 +30,7 @@ then
 fi
 
 # Start Mesos Master
-mesos master --zk=$MESOS_ZKLIST --work_dir=$MESOS_WORKDIR --quorum=$MESOS_QUORUM --log_dir=$MESOS_LOGDIR --quiet &
+mesos master --ip=$MASTERIP --zk=$MESOS_ZKLIST --work_dir=$MESOS_WORKDIR --quorum=$MESOS_QUORUM --log_dir=$MESOS_LOGDIR --quiet &
 
 # Start Marathon Framework
 cd /usr/local/marathon
