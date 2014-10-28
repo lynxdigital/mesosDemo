@@ -20,6 +20,7 @@ usermod -a -G docker vagrant
 mkdir -p /opt/mesosDemo
 chown vagrant:vagrant -R /opt/mesosDemo
 cp -av /vagrant/master/* /opt/mesosDemo/
+chmod u+x /opt/mesosDemo/startup.sh
 
 # Build Docker Machines For Master Service
 cd /opt/mesosDemo

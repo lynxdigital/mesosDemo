@@ -15,8 +15,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       v.cpus = 1
     end
     master.vm.network "forwarded_port", guest: 8080, host: 8080
-    master.vm.network "forwarded_port", guest: 5050, host: 5050
     master.vm.network "forwarded_port", guest: 5000, host: 5000
+    master.vm.network "forwarded_port", guest: 80, host:80
     master.vm.network "private_network", ip: "192.168.58.201"
     master.vm.provision :shell, path: "master/bootstrap.sh"
   end

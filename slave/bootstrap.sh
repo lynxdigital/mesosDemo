@@ -20,6 +20,7 @@ usermod -a -G docker vagrant
 
 # Copy In Files
 mkdir -p /opt/mesosDemo
+chown vagrant:vagrant -R /opt/mesosDemo
 cp -av /vagrant/slave/* /opt/mesosDemo/
 chmod u+x /opt/mesosDemo/startup.sh
 
