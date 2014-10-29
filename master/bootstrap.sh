@@ -42,6 +42,7 @@ docker push 192.168.58.201:5000/myapp:latest
 docker stop $REGISTRY
 docker rm $REGISTRY
 docker rmi 192.168.58.201:5000/myapp:latest
+docker rmi myapp:latest
 
 # Add Startup To Boot
 echo >> /etc/rc.local

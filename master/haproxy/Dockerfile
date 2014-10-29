@@ -10,7 +10,7 @@ ADD scripts/start.sh /start.sh
 # Install Packages And Modify Script Permissions
 RUN yum -y install haproxy && \
       yum -y clean all; \
-      chmod u+x /usr/bin/haproxy-marathon-bridge; \
+      chmod u+x /usr/bin/haproxy-marathon-bridge.sh; \
       chmod u+x /usr/bin/run-haproxy-update.sh; \
       chmod u+x /start.sh;
 
