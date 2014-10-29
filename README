@@ -1,0 +1,183 @@
+--------------------------------------
+Application Scalability Code Challenge
+Geoffrey Harrison
+Geoffrey.Harrison@lynxdigital.com.au
+--------------------------------------
+
+------------
+INTRODUCTION
+------------
+In response to the application scalability challenge which was put forward, I have created a dynamically 
+scalable cluster proof-of-concept environment, that with some additional work could be transformed into 
+a fully working Production environment for DevOps engineers to utilise resources across multiple data 
+centres and regions.
+
+------------
+THE SOLUTION
+------------
+The solution is based on three main open source technology projects:
+  * The Apache Mesos project
+  * The Mesosphere Marathon project
+  * The Docker project
+Each of these bring an important element to the cluster - more details about each project are below 
+the getting started section.
+
+---------------
+GETTING STARTED
+---------------
+To get started without reading everything:
+  * Ensure your attached to a decent Internet Connection.
+  * Ensure Vagrant and Virtualbox are installed and configured locally.
+  * Checkout the repository using Git (git clone http://github.com/lynxdigital/mesosDemo.git)
+  * cd into the Project folder and execute 'vagrant up'
+Vagrant will take a while to execute as it will download and configure a box template and then packages 
+for the environments (It's a good chance to grab a coffee and read the rest of this document!). 
+
+When the Vagrant script is complete:
+  * There will be one Master node and one Slave node configured and running.
+  * The Master will be on IP 192.168.58.201
+  * The Slave will be on IP 192.168.58.211
+
+You can access the following interfaces:
+  * localhost:8080 or 192.168.58.201:8080 - the Marathon Web/JSON API
+  * localhost:5000 or 192.168.58.201:5000 - a Private Docker Repository
+  * 192.168.58.201:5050 - the Mesos Master web interface
+
+Adding The Additional Slaves
+----------------------------
+Only one slave is built by default - there are two additional slaves defined in Vagrantfile:
+  * For slave 2 - 'vagrant up slave2' - It's IP is 192.168.58.212
+  * For slave 3 - 'vargant up slave3' - It's IP is 192.168.58.213
+Once built and started, they will add themselves to the pool of resources available to Mesos/Marathon 
+for executing applications/tasks.
+
+Running The Sample Application
+------------------------------
+A sample application is included and pre-uploaded to the Private Docker Registry ready for deployment to 
+the slave cluster at master bootstrap time. The application returns the IP address of the Docker container 
+it is executed in on the slave.
+  * From the Project folder -> 'cd master/myapp'
+  * Run './start_myapp.sh'
+This will issue a 'curl' command with the input from the file 'start_myapp.json' to the Marathon API. If 
+you monitor the Mesos Web Interface, you may see a few 'KILLED' statuses returned on the first run on the 
+slave. This occurs as the Docker container needs to be downloaded from the Private Repository. After a few 
+seconds, the container should be running correctly.
+
+So The App Is Running - Now What?
+---------------------------------
+- Application Output -
+The Mesos Master contains a custom built HAProxy session which dynamically re-builds it's config every 60 seconds 
+with the information from Marathon. After a maximum of 60 seconds, Proxy config will update and you can get to 
+the session(s) by going to either:
+  * http://localhost:8888 or 
+  * http://192.168.58.201:80
+You can then see the applications output that is running on the slave(s).
+
+- Application Scaling -
+Marathon can use Mesos to dynamically scale the Docker container by running multiple copies.
+  * Open the Marathon Interface
+  * Click on the '/myapp' application in the list
+  * Click the 'scale' button
+  * Enter in a new scale number and click OK.
+Marathon will then spin up the desired number of Docker containers to meet the new scaled value. The details can 
+also be submitted using the JSON interface. HAProxy will again pick up on the changes within 60 seconds and 
+update the load balancer accordingly.
+
+- Destroying The Application -
+When your done running the application:
+  * Open the Marathon Interface
+  * Click on the '/myapp' application in the list
+  * Click on the 'Destroy App' button and confirm
+Marathon will stop all Docker instances of the application running in the cluster. HAProxy will remove the 
+configuration within 60 seconds.
+
+Destroy The Environment
+-----------------------
+To remove all the configuration
+* cd to the top level of the Project folder
+* execute 'vagrant destroy'
+
+--------------------
+MAIN TECHNOLOGY USED
+--------------------
+Below is an outline of the main techologies used and the roles they play in the cluster infrastructure.
+- Apache Zookeeper -
+Zookeeper is used for leader election and the sharing of information between the Mesos Masters and
+Marathon, and both can be executed in a HA fashion.
+
+- Apache Mesos -
+The HA framework and cluster scheduling layer. Though it's Master/Slave architecture, it presents a number of 
+compute resources (aka Slaves) as a single clustered 'supercomputer'. Using this model, application developers
+don't worry about what the physical architecture contains - they define the resources required by their application
+in a JSON format (e.g. cpu/ram/no. instances) and the cluster simply handles it. Mesos receives workloads from i
+frameworks and distributes these workloads across the Slave workforce accordingly. Tasks can be run either 
+short or long term (seconds to years), and multiple frameworks can exist simultaniously to allow the cluster 
+to be utilised in mutliple ways. Mesos has been referenced as the 'OS' for the data centre in mutliple sources 
+around the web.
+
+- Mesosphere Marathon - 
+If Mesos is the OS for the datacentre, Marathon is the Init system. Marathon is a framework which connects to Mesos 
+and allows applications (tasks) to be controlled through their lifecycle (started, controlled, scaled and destroyed)
+all via a JSON/Web API. Marathon monitors the running tasks to ensure that applications are running the right number of 
+instances across the cluster. If an instance is killed, it starts another. If there are too many, it will scale them back.
+The JSON used to start or modify applications can be easily stored with their applications in a code repository.
+
+- Docker -
+Converting virtualisation into process aggregation, Docker allows for self-contained 'containers' to run code in isolated 
+environments while sharing the host OS resources. The addition of Docker to the cluster stack brings huge flexibility to
+developers and operations alike:
+* ANY distrobution of Linux with 
+* ANY development stack with
+* ANY collection/versions of libraries
+can all be run side by side. This means parts of a major application platform can run in multiple languages in the same 
+cluster nodes on different distributions at different library levels and it will JUST WORK. This allows for the best
+of each distribution/language to be brought to bare when building parts of a major application.
+
+- HAProxy - 
+The standard HAProxy client has been modified slightly with the addition of a script which can read the Marathon API 
+data and generate a configuration for HAProxy dynamically. The HAProxy config is updated and reloaded every 60 seconds
+and provides a way for end users to interact with web applications that have dynamically been spread throughout
+the cluster.
+
+----------
+Q & A TIME
+----------
+Q: You've used Virtualbox/Vagrant VMs and bootstrapped via Scripts instead of Puppet. Why?
+A: Due to time contraints. My origonal plan when working on the cluster were for it to be all executed in Docker,
+  however, this ended up failing when I tried to built the Mesos Slave. I had all the origonal scripts so I 
+  rebuilt it in Vagrant and used some of the Docker componenets I'd already built. If I did it again and had 
+  time, I'd be using Puppet for the base system configuration.
+
+Q: So, do you know puppet?
+A: Yep - I have another code sample which is over 12 months old which outlined my Puppet skills at that point
+  in time (I've gotten better since then). You can Git clone it from 'https://github.com/lynxdigital/HelloWorld.git'.
+
+Q: Would you make any changes/improvements putting this into Production?
+A: YES - YES - YES - there are many areas that need improvement in this setup. To outline a few:
+  * Lack of security
+  * Make HAProxy reload intelligent rather then time based
+  * Make HAProxy work via Host Headers rather then port assignment
+  * Break out the Mesos Master from Docker so it can be easily clustered
+  * Break out Zookeeper from Docker so it can be easily clustered
+  * ...the list goes on.
+
+Q: So, Marathon is a framework for Mesos. What other frameworks are there?
+A: To name a few:
+  * Aurora - allows submission of jobs via Python DSL
+  * Jenkins CI/CD Mesos plugin - Run Jenkins slaves on Mesos clustered resources
+  * Chronos - Schedule tasks across the cluster
+  * Hadoop - Use the Mesos resources for Map/Reduce jobs
+  The beauty is that once a task is complete, the resources are dynamically released and used for other tasks.
+
+----------
+CONCLUSION
+----------
+Finally, I just wanted to say thanks - this was a fun little project and I actually learnt a few things while
+putting it together.
+
+I look forward to hearing from you soon.
+
+------------------
+Best Regards,
+Geoffrey Harrison
+------------------
